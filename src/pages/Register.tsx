@@ -76,7 +76,6 @@ export default function Register() {
                   <button type="submit" className="btn btn-neutral mt-4">
                     Registrar
                   </button>
-                  "
                   {respuesta && (
                     <div className="text-green-400">{respuesta}</div>
                   )}
