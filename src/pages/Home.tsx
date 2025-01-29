@@ -1,4 +1,4 @@
-export const BasePage = () => {
+export default function Home() {
   return (
     <div
       className="hero min-h-screen"
@@ -21,4 +21,4 @@ export const BasePage = () => {
       </div>
     </div>
   );
-};
+}
