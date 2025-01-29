@@ -1,7 +1,7 @@
 /* import { navigate } from "wouter/use-browser-location"; */
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import axios from "axios";
 
 const registerSchema = Yup.object({
