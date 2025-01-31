@@ -23,6 +23,7 @@ interface respose {
 
 export default function Register() {
   const [respuesta, setRespuesta] = useState<string>("");
+  const [ok, setOk] = useState<boolean>(false);
 
   return (
     <div className="hero bg-base-200 min-h-screen">
@@ -53,22 +54,27 @@ export default function Register() {
                 );
 
                 if (res.status === 201) {
+                  setOk(true);
                   setRespuesta("Usuario registrado correctamente");
                 } else {
+                  setOk(false);
                   setRespuesta("Error al registrar usuario");
                 }
               }}
             >
               {({ errors, touched }) => (
                 <Form className="fieldset">
+                  <label className="label">Nombre</label>
                   <Field name="name" className="input" />
                   {touched.name && errors.name && (
                     <div className="text-red-400">{errors.name}</div>
                   )}
+                  <label className="label">Email</label>
                   <Field name="email" className="input" />
                   {touched.email && errors.email && (
                     <div className="text-red-400">{errors.email}</div>
                   )}
+                  <label className="label">Contraseña</label>
                   <Field name="password" className="input" />
                   {touched.password && errors.password && (
                     <div className="text-red-400">{errors.password}</div>
@@ -77,7 +83,9 @@ export default function Register() {
                     Registrar
                   </button>
                   {respuesta && (
-                    <div className="text-green-400">{respuesta}</div>
+                    <div className={ok ? "text-green-400" : "text-red-400"}>
+                      {respuesta}
+                    </div>
                   )}
                 </Form>
               )}

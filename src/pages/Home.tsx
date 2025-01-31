@@ -1,4 +1,8 @@
+import { useAuth } from "../context/AuthContext";
+
 export default function Home() {
+  const { user } = useAuth();
+
   return (
     <div
       className="hero min-h-screen"
@@ -10,11 +14,13 @@ export default function Home() {
       <div className="hero-overlay bg-opacity-60"></div>
       <div className="hero-content text-neutral-content text-center">
         <div className="max-w-md">
-          <h1 className="mb-5 text-5xl font-bold">Hello there</h1>
+          <h1 className="mb-5 text-5xl font-bold">
+            {user
+              ? `Biembnido, ${user.name}!`
+              : "Bienvenido a la página principal"}
+          </h1>
           <p className="mb-5">
-            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-            excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
-            a id nisi.
+            Esta es la página principal de la aplicación. Aquí puedes ver
           </p>
           <button className="btn btn-primary">Get Started</button>
         </div>

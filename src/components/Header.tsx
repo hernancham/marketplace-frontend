@@ -1,6 +1,8 @@
 import { Link } from "wouter";
+import { useAuth } from "../context/AuthContext";
 
 export const Header = () => {
+  const { logout, isAuthenticated } = useAuth();
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="navbar-start">
@@ -71,12 +73,25 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end">
-        <Link to="/register" asChild>
-          <a className="btn">Register</a>
-        </Link>
-        <Link to="/login" asChild>
-          <a className="btn">Login</a>
-        </Link>
+        {isAuthenticated ? (
+          <>
+            <Link to="/perfil" asChild>
+              <a className="btn">Mi perfil</a>
+            </Link>
+            <button className="btn btn-square" onClick={logout}>
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/register" asChild>
+              <a className="btn">Register</a>
+            </Link>
+            <Link to="/login" asChild>
+              <a className="btn">Login</a>
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );
