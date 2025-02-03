@@ -3,8 +3,6 @@ import { useAuth } from "../context/AuthContext";
 
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { useState } from "react";
-import axios from "axios";
 
 const loginSchema = Yup.object({
   email: Yup.string().email("Email invalido").required("Es requerido"),
@@ -36,7 +34,11 @@ export default function Login() {
               validationSchema={loginSchema}
               onSubmit={async (values) => {
                 try {
-                  await login(values.email, values.password);
+                  await login({
+                    email: values.email,
+                    password: values.password,
+                  });
+                  navigate("/");
                 } catch (error) {
                   console.error(error);
                 }

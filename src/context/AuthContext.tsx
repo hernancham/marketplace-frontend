@@ -1,124 +1,106 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useEffect,
-} from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { navigate } from "wouter/use-browser-location";
+import { createContext, useContext } from "react";
+import { usePersistedState } from "../hooks/usePersistState";
+import { api } from "../libs/axiosInstance";
 
-// Definir el tipo de usuario
 interface User {
   id: string;
   name: string;
   email: string;
   role: string;
   status: string;
-  createdAt: string;
 }
 
-// Definir el contexto
-interface AuthContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+interface Session {
+  token: string;
+  user: User;
+}
+
+interface registerParams {
+  name: string;
+  email: string;
+  password: string;
+}
+
+interface loginParams {
+  email: string;
+  password: string;
+}
+
+interface AuthContextData {
+  session: Session | null;
+  register: (params: registerParams) => Promise<void>;
+  login: (params: loginParams) => Promise<void>;
   logout: () => void;
 }
 
-// Crear el contexto
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextData | undefined>(undefined);
 
-// Hook para usar el contexto
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [session, setSession] = usePersistedState<Session | null>(
+    "session",
+    null
+  );
+
+  const register = async (registerData: registerParams): Promise<any> => {
+    try {
+      const res = await api.post("/auth/register", registerData);
+
+      if (res.status !== 201) {
+        throw new Error(res.data.message || "Error al registrar el usuario");
+      }
+
+      const res2 = await api.post("/auth/login", {
+        email: registerData.email,
+        password: registerData.password,
+      });
+
+      if (res2.status !== 201) {
+        throw new Error(res2.data.message || "Error al iniciar sesión");
+      }
+
+      setSession(res2.data);
+
+      return res.data;
+    } catch (error) {
+      console.error("Error en register:", error);
+      throw error;
+    }
+  };
+
+  const login = async (loginData: loginParams): Promise<any> => {
+    try {
+      const res = await api.post("/auth/login", loginData);
+
+      if (res.status !== 201) {
+        throw new Error(res.data.message || "Error al iniciar sesión");
+      }
+      setSession(res.data);
+      return res.data;
+    } catch (error) {
+      console.error("Error en login:", error);
+      throw error;
+    }
+  };
+
+  const logout = () => {
+    setSession(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ session, register, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth debe usarse dentro de AuthProvider");
   }
   return context;
-};
-
-// **Proveedor del contexto**
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem("token")
-  );
-
-  // Mutación para el login
-  const { mutate } = useMutation({
-    mutationFn: async (values: { email: string; password: string }) => {
-      const response = await axios.post(
-        "https://marketplace-backend-icya.onrender.com/api/v1/auth/login",
-        values
-      );
-      return response.data;
-    },
-    onSuccess: async (data) => {
-      localStorage.setItem("token", data.token);
-      setToken(data.token); // Actualiza el token en el estado
-      await refetchUser(); // Obtiene la información del usuario después del login
-      navigate("/");
-    },
-    onError: () => {
-      alert("Error al iniciar sesión.");
-    },
-  });
-
-  // Función para obtener el perfil del usuario
-  const fetchProfile = async () => {
-    if (!token) throw new Error("No hay token");
-
-    const response = await axios.get(
-      "https://marketplace-backend-icya.onrender.com/api/v1/auth/profile",
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    return response.data;
-  };
-
-  // Query para obtener el usuario autenticado
-  const {
-    data,
-    refetch: refetchUser,
-    isSuccess,
-    isError,
-  } = useQuery({
-    queryKey: ["profile"],
-    queryFn: fetchProfile,
-    enabled: !!token, // Solo ejecuta si hay token
-  });
-
-  useEffect(() => {
-    if (isSuccess) {
-      setUser(data);
-    }
-    if (isError) {
-      setUser(null);
-      localStorage.removeItem("token");
-    }
-  }, [isSuccess, isError, data]);
-
-  // Función para cerrar sesión
-  const logout = () => {
-    localStorage.removeItem("token");
-    setToken(null);
-    setUser(null);
-    navigate("/login");
-  };
-
-  const login = async (email: string, password: string) => {
-    await mutate({ email, password });
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, login, logout }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
 };

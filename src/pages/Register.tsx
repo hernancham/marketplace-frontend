@@ -2,7 +2,8 @@
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
-import axios from "axios";
+import { useAuth } from "../context/AuthContext";
+import { navigate } from "wouter/use-hash-location";
 
 const registerSchema = Yup.object({
   name: Yup.string()
@@ -16,12 +17,8 @@ const registerSchema = Yup.object({
     .required("Es requerido"),
 });
 
-interface respose {
-  name: string;
-  email: string;
-}
-
 export default function Register() {
+  const { register } = useAuth();
   const [respuesta, setRespuesta] = useState<string>("");
   const [ok, setOk] = useState<boolean>(false);
 
@@ -44,21 +41,14 @@ export default function Register() {
               }}
               validationSchema={registerSchema}
               onSubmit={async (values) => {
-                const res = await axios.post<respose>(
-                  "https://marketplace-backend-icya.onrender.com/api/v1/auth/register",
-                  {
-                    name: values.name,
-                    email: values.email,
-                    password: values.password,
-                  }
-                );
-
-                if (res.status === 201) {
+                try {
+                  await register(values);
                   setOk(true);
                   setRespuesta("Usuario registrado correctamente");
-                } else {
+                  navigate("/");
+                } catch (error: Error | any) {
                   setOk(false);
-                  setRespuesta("Error al registrar usuario");
+                  setRespuesta(error.message || "Error al registrar usuario");
                 }
               }}
             >

@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { useAuth } from "../context/AuthContext";
 
 export const Header = () => {
-  const { logout, isAuthenticated } = useAuth();
+  const { logout, session } = useAuth();
   return (
     <div className="navbar bg-base-100 shadow-sm">
       <div className="navbar-start">
@@ -73,7 +73,7 @@ export const Header = () => {
         </ul>
       </div>
       <div className="navbar-end">
-        {isAuthenticated ? (
+        {session ? (
           <>
             <Link to="/perfil" asChild>
               <a className="btn">Mi perfil</a>

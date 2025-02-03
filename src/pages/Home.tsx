@@ -1,7 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 
 export default function Home() {
-  const { user } = useAuth();
+  const { session } = useAuth();
 
   return (
     <div
@@ -15,8 +15,8 @@ export default function Home() {
       <div className="hero-content text-neutral-content text-center">
         <div className="max-w-md">
           <h1 className="mb-5 text-5xl font-bold">
-            {user
-              ? `Biembnido, ${user.name}!`
+            {session
+              ? `Biembenido, ${session.user.name}!`
               : "Bienvenido a la página principal"}
           </h1>
           <p className="mb-5">

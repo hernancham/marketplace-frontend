@@ -1,11 +1,13 @@
 import { useAuth } from "../context/AuthContext";
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { session } = useAuth();
   return (
     <div>
-      {user ? `Bienvenido, ${user.name}!` : "Bienvenido a la página de perfil"}
-      <pre>{JSON.stringify(user, null, 2)}</pre>
+      {session
+        ? `Bienvenido, ${session.user.name}!`
+        : "Bienvenido a la página de perfil"}
+      <pre>{JSON.stringify(session, null, 2)}</pre>
     </div>
   );
 }
