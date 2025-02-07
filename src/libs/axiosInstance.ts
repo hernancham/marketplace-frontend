@@ -1,4 +1,6 @@
 import axios from "axios";
+import { getItem } from "../utils/localStorage";
+import { Session } from "../context/AuthContext";
 
 // Crear instancia de Axios con configuración base
 export const api = axios.create({
@@ -9,11 +11,11 @@ export const api = axios.create({
 });
 
 // Interceptor para agregar el token en cada solicitud
-/* api.interceptors.request.use(
+api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token"); // Obtener el token del almacenamiento
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const session: Session = getItem("session"); // Obtener el token del almacenamiento
+    if (session) {
+      config.headers.Authorization = `Bearer ${session.token}`;
     }
     return config;
   },
@@ -21,4 +23,3 @@ export const api = axios.create({
     return Promise.reject(error);
   }
 );
- */

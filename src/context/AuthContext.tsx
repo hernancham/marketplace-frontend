@@ -2,15 +2,15 @@ import { createContext, useContext } from "react";
 import { usePersistedState } from "../hooks/usePersistState";
 import { api } from "../libs/axiosInstance";
 
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;
   role: string;
-  status: string;
+  phone: string;
 }
 
-interface Session {
+export interface Session {
   token: string;
   user: User;
 }

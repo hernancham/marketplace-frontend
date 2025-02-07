@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 export const Header = () => {
   const { logout, session } = useAuth();
   return (
-    <div className="navbar bg-base-100 shadow-sm">
+    <div className="navbar bg-base-100 shadow-sm px-8">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -29,7 +29,9 @@ export const Header = () => {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a>Item 1</a>
+              <Link to="/vendedor" asChild>
+                <a>Vender</a>
+              </Link>
             </li>
             <li>
               <a>Parent</a>
@@ -47,13 +49,15 @@ export const Header = () => {
             </li>
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">daisyUI</a>
+        <Link to="/" asChild>
+          <a className="text-lg font-bold">Marketplace</a>
+        </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          <li>
-            <a>Item 1</a>
-          </li>
+          <Link to="/vendedor" asChild>
+            <a>Vender</a>
+          </Link>
           <li>
             <details>
               <summary>Parent</summary>

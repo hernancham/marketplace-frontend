@@ -13,6 +13,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const Home = lazy(() => import("./pages/Home"));
 const Profile = lazy(() => import("./pages/Profile"));
+const Vender = lazy(() => import("./pages/Vender"));
 
 /* const Products = lazy(() => import("./pages/Products"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
@@ -55,7 +56,9 @@ const App = () => {
       <Route path="/mis-pedidos"></Route>
 
       {/* Rutas protegidas para vendedores */}
-      <Route path="/vendedor"></Route>
+      <Route path="/vendedor">
+        <Page layout={Layout} page={Vender} />
+      </Route>
       <Route path="/vendedor/productos"></Route>
       <Route path="/vendedor/pedidos"></Route>
       <Route path="/vendedor/ventas"></Route>
