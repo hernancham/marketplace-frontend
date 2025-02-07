@@ -34,18 +34,9 @@ export const Header = () => {
               </Link>
             </li>
             <li>
-              <a>Parent</a>
-              <ul className="p-2">
-                <li>
-                  <a>Submenu 1</a>
-                </li>
-                <li>
-                  <a>Submenu 2</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a>Item 3</a>
+              <Link to="/productos" asChild>
+                <a>Productos</a>
+              </Link>
             </li>
           </ul>
         </div>
@@ -55,21 +46,15 @@ export const Header = () => {
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          <Link to="/vendedor" asChild>
-            <a>Vender</a>
-          </Link>
           <li>
-            <details>
-              <summary>Parent</summary>
-              <ul className="p-2">
-                <li>
-                  <a>Submenu 1</a>
-                </li>
-                <li>
-                  <a>Submenu 2</a>
-                </li>
-              </ul>
-            </details>
+            <Link to="/vendedor" asChild>
+              <a>Vender</a>
+            </Link>
+          </li>
+          <li>
+            <Link to="/productos" asChild>
+              <a>Productos</a>
+            </Link>
           </li>
           <li>
             <a>Item 3</a>

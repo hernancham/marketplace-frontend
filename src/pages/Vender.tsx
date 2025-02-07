@@ -1,26 +1,64 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../libs/axiosInstance";
 import { Redirect } from "wouter";
+import { CustomSelect } from "../components/CustomSelect";
 
 const registerSchema = Yup.object({
-  name: Yup.string()
-    .min(4, "Es muy corto!")
-    .max(50, "Es muy largo!")
+  titulo: Yup.string().required("Es requerido"),
+  descripcion: Yup.string().required("Es requerido"),
+  precio: Yup.number()
+    .min(0, "Debe ser mayor o igual a 0")
     .required("Es requerido"),
-  description: Yup.string().required("Es requerido"),
-  category: Yup.string().required("Es requerido"),
-  price: Yup.number().required("Es requerido"),
-  stock: Yup.number().required("Es requerido"),
+  stock: Yup.number().min(1, "Debe ser mayor a 0").required("Es requerido"),
   image: Yup.mixed().required("Es requerido"),
+  categoryIds: Yup.array()
+    .of(Yup.string())
+    .min(1, "Debe seleccionar al menos una categoría")
+    .optional(),
 });
+
+export type CategoriesType = CategoryType[];
+export interface CategoryType {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  products: any[];
+}
+
+export type Options = Option[];
+export interface Option {
+  value: string;
+  label: string;
+}
 
 export default function Vender() {
   const { session } = useAuth();
   const [respuesta, setRespuesta] = useState<string>("");
   const [ok, setOk] = useState<boolean>(false);
+
+  const [opciones, setOpciones] = useState<Options>([]);
+
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const response = await api.get<CategoriesType>("/categories");
+        const data = response.data;
+        const opcionesFormateadas = data.map((item) => ({
+          value: item.id,
+          label: item.name,
+        }));
+        setOpciones(opcionesFormateadas);
+      } catch (error) {
+        console.error("Error al cargar opciones:", error);
+      }
+    };
+
+    fetchOptions();
+  }, []);
 
   if (!session) {
     return <Redirect to="/login" />;
@@ -34,7 +72,7 @@ export default function Vender() {
     <div className="hero bg-base-200 min-h-screen">
       <div className="hero-content flex-col lg:flex-row-reverse">
         <div className="text-center lg:text-left">
-          <h1 className="text-5xl font-bold">Sebir un producto</h1>
+          <h1 className="text-5xl font-bold">Subir un producto</h1>
           <p className="py-6">
             Esta es la página para vender un producto. Aquí puedes vender un
             producto para acceder
@@ -44,12 +82,12 @@ export default function Vender() {
           <div className="card-body">
             <Formik
               initialValues={{
-                name: "",
-                description: "",
-                category: "",
-                price: 0,
-                stock: 1,
+                titulo: "",
+                descripcion: "",
+                precio: 0,
+                stock: 0,
                 image: null,
+                categoryIds: [],
               }}
               validationSchema={registerSchema}
               onSubmit={async (values) => {
@@ -59,12 +97,12 @@ export default function Vender() {
                 });
                 console.log(response.data);
                 const res = await api.post("/products", {
-                  name: values.name,
-                  description: values.description,
-                  category: values.category,
-                  price: values.price,
+                  titulo: values.titulo,
+                  descripcion: values.descripcion,
+                  precio: values.precio,
                   stock: values.stock,
-                  imageUrl: response.data.imageUrl,
+                  imageUrl: response.data.secure_url,
+                  categoryIds: values.categoryIds,
                 });
                 console.log(res);
                 if (res.status === 201) {
@@ -79,38 +117,29 @@ export default function Vender() {
               {({ setFieldValue }) => (
                 <Form className="fieldset">
                   <label className="label flex flex-col items-start">
-                    Nombre
-                    <Field name="nombre" className="input" />
+                    Titulo
+                    <Field name="titulo" className="input" />
                   </label>
                   <ErrorMessage
-                    name="nombre"
+                    name="titulo"
                     className="text-red-400"
                     component="div"
                   />
                   <label className="label flex flex-col items-start">
                     Descripción
-                    <Field name="description" className="input" />
+                    <Field name="descripcion" className="input" />
                   </label>
                   <ErrorMessage
-                    name="description"
-                    className="text-red-400"
-                    component="div"
-                  />
-                  <label className="label flex flex-col items-start">
-                    Categoría
-                  </label>
-                  <Field name="category" className="input" />
-                  <ErrorMessage
-                    name="category"
+                    name="descripcion"
                     className="text-red-400"
                     component="div"
                   />
                   <label className="label flex flex-col items-start">
                     Precio
                   </label>
-                  <Field name="price" type="number" className="input" />
+                  <Field name="precio" type="number" className="input" />
                   <ErrorMessage
-                    name="price"
+                    name="precio"
                     className="text-red-400"
                     component="div"
                   />
@@ -136,6 +165,23 @@ export default function Vender() {
                       const file = event.currentTarget.files[0];
                       setFieldValue("image", file);
                     }}
+                  />
+                  <ErrorMessage
+                    name="image"
+                    className="text-red-400"
+                    component="div"
+                  />
+
+                  <label className="label flex flex-col items-start">
+                    Categorias
+                  </label>
+                  <Field
+                    className="text-gray-700"
+                    name="categoryIds"
+                    options={opciones}
+                    component={CustomSelect}
+                    placeholder="Selecciona las categorías"
+                    isMulti={true}
                   />
 
                   <button type="submit" className="btn btn-neutral mt-4">

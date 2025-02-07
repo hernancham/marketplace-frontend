@@ -14,8 +14,8 @@ const Register = lazy(() => import("./pages/Register"));
 const Home = lazy(() => import("./pages/Home"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Vender = lazy(() => import("./pages/Vender"));
-
-/* const Products = lazy(() => import("./pages/Products"));
+const Productos = lazy(() => import("./pages/Productos"));
+/*
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Cart = lazy(() => import("./pages/Cart"));
 const Checkout = lazy(() => import("./pages/Checkout"));
@@ -44,7 +44,9 @@ const App = () => {
         <Page layout={Layout} page={Home} />
       </Route>
 
-      <Route path="/productos"></Route>
+      <Route path="/productos">
+        <Page layout={Layout} page={Productos} />
+      </Route>
       <Route path="/producto/:id"></Route>
       <Route path="/carrito"></Route>
       <Route path="/checkout"></Route>
