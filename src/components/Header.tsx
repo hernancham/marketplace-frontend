@@ -38,6 +38,11 @@ export const Header = () => {
                 <a>Productos</a>
               </Link>
             </li>
+            <li>
+              <Link to="/carrito" asChild>
+                <a>Carrito</a>
+              </Link>
+            </li>
           </ul>
         </div>
         <Link to="/" asChild>
@@ -57,7 +62,9 @@ export const Header = () => {
             </Link>
           </li>
           <li>
-            <a>Item 3</a>
+            <Link to="/carrito" asChild>
+              <a>Carrito</a>
+            </Link>
           </li>
         </ul>
       </div>

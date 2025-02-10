@@ -17,7 +17,6 @@ export interface Product {
 export interface Seller {
   id: string;
   email: string;
-  password: string;
   name: string;
   phone: string;
   role: string;
